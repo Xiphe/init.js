@@ -1,7 +1,7 @@
 xiphe-init.js
 =============
 
-Basic js functions for namespacing, loose/asynchronous dependencies, and jQuery plugins.
+Basic js functions for namespacing, loose dependencies, asynchronous loading and jQuery plugins.
 
 
 Namespace
@@ -25,7 +25,8 @@ window.foo = {
 };
 ```
 But existent values will not be overwritten and existent objects will be extended.
-Overwriting is disabled by default. To replace 'ipsum' with 'dolor' the third parameter has to be true.
+Overwriting is disabled by default. To replace 'ipsum' with 'dolor' the third parameter
+has to be `true`.
 ```js
 namespace('foo.bar.lorem', 'dolor', true);
 ```
@@ -38,24 +39,26 @@ Will return "ipsum".
 ```js
 namespace('not.set.jet');
 ```
-Will return undefined but will not throw an error if not or set are not defined jet.
+Will return `undefined` but will not throw an error if `not` or `set` are not defined jet.
 
 #### Error Case 1: Don't use middle tokens that are not objects or functions.
 ```js
-var foo = 'This is not an object.';
+var foo = 'This is a string.';
 namespace('foo.bar', 'lorem');
 ```
-This will throw an error and return undefined because foo is not an object or function.
-Passing true as the third parameter will not suppress this error - you should handle that by yourself. 
+This will throw an error and return `undefined` because foo is not an object or function.
+Passing `true` as the third parameter will not suppress this error - you should handle
+that by yourself. 
 
 
 Wait Until
 ----------
-> _undefined_ **xiphe.wait.until** ( _string_ module, _function_ callback [, _integer_ intervall = 10 ] [, _integer_ patience = 3000 ] [, _boolean_ continue_on_error = true] );
+> _undefined_ **xiphe.wait.until** ( _string_ module, _function_ callback [, _integer_ intervall = 10 ] [, _integer_ patience = 3000 ] [, _boolean_ continueOnError = true] );
 
 ---
 
-This function is collecting `callbacks` that will be fired once the `module` stops being undefined. If the module is allready defined, the callback is fired instantly.  
+This tool is collecting `callbacks` that will be fired once the `module` stops being
+undefined. If the module is already defined, the callback is fired instantly.  
 This comes handy when dealing with asynchronous loading and loose dependencies.
 
 #### Example
@@ -66,17 +69,65 @@ xiphe.wait.until('foo', function(module) {
 });
 window.setTimeout(function() { foo = 'bar'; }, 100);
 ```
-This will print "Foo is now available and it's value is bar" into the console after 100 miliseconds.
+This will print "Foo is now available and it's value is bar" into the console after
+100 miliseconds.
 
 #### Intervall
-In the background, a loop is started for each module. The time between two checks can be adjusted by setting the third value.  
+In the background, a loop is started for each module. The time between two checks can be
+adjusted by setting the third value.  
 ```js
-xiphe.wait.until('foo', function(module) {
-  console.log("Foo is now available");
-}, 1000);
-var foo = 'bar';
+xiphe.wait.until('foo.bar', function(module) {
+  console.log("foo.bar is now available");
+}, 1000 /* Default: 10 */);
+var foo = { bar: 'lorem' };
 ```
-"Foo is now available" will be printed after one second.
+"foo.bar is now available" will be printed after one second.
+
+#### Patience
+To keep the number of loops low, this tool will abort after 3 seconds by default.
+This can be changed globally by setting the number of milliseconds until aborting into
+`xiphe.wait.patience`. (-1 will never abort).
+```js
+xiphe.wait.patience = 6000; // 6 Seconds, Default: 3000
+```
+A single call accepts patience as the forth parameter and will prefer this value to
+the global one.
+```js
+xiphe.wait.until(
+	'foo.mooh',
+	function(module) {
+  		console.log("foo.mooh is now available");
+	},
+	10,
+	100
+);
+
+window.setTimeout(function() { foo = { mooh: 'dolor' }; }, 200);
+```
+This will put the following error into the console: 'Module "foo.bar" not found in 0.1
+seconds - aborting!'
+
+#### Continue on Error
+By default, the registered callbacks will be fired even if the module has not been found
+within the given patience (Loose Dependency Mode). By setting the value of
+`xiphe.wait.continueOnError`, this behavior can be changed globally.
+```js
+xiphe.wait.continueOnError = false; // Default: true
+```
+
+This behavior can also be changed individually by passing a boolean as the fifth
+parameter.
+```js
+xiphe.wait.until(
+	'foo.maeh',
+	function(module) {
+  		console.log("This will never be executed.");
+	},
+	10,
+	100,
+	false
+);
+```
 
 
 Todo

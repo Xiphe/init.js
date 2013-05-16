@@ -1,10 +1,21 @@
-var namespace = this.namespace = function(space, value, overwrite) {
+/**
+ * Get and Set values into nested objects and stop caring about their existence.
+ * The most left objectPath token will be set into the window object unless
+ * another object is applied to the function call.
+ *
+ * @param  {String}  objectPath
+ * @param  {Mixed}   variable
+ * @param  {Boolean} overwrite
+ *
+ * @return {Mixed}   Whatever is at the end of the objectPath.
+ */
+var namespace = this.namespace = function(objectPath, value, overwrite) {
   var undef,
     token,
     self = this,
     object = self,
     undef_str = typeof undef,
-    tokens = space.split('.');
+    tokens = objectPath.split('.');
 
   /* Turn off overwriting by default. */
   overwrite = (typeof overwrite !== undef_str ? overwrite : false);

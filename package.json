@@ -7,5 +7,32 @@
     "grunt-contrib-qunit": "~0.2.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-watch": "~0.4.3"
-  }
+  },
+  "readmeFilename": "README.md",
+  "gitHead": "ad9cae966c8c251c392f4e347c4762270322e1b8",
+  "description": "Basic js functions for namespacing, loose dependencies, asynchronous loading and jQuery plugins.",
+  "main": "gruntfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-qunit": "~0.2.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.3",
+    "grunt-wrap": "~0.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Xiphe/js_init.git"
+  },
+  "keywords": [
+    "namespace",
+    "loose dependencies",
+    "asynchronous loading",
+    "jQuery plugins"
+  ],
+  "author": "Hannes Diercks <info@xiphe.net>",
+  "license": "MIT"
 }

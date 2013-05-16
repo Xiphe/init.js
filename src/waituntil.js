@@ -1,11 +1,14 @@
 /*global namespace, xiphe */
 namespace('xiphe.wait.patience', 3000);
+namespace('xiphe.wait.continueOnError', true);
 namespace('xiphe.wait.until', (function() {
   var undef,
     _available,
     _waitFor,
     _callbacks,
+    wait = xiphe.wait,
     self = this,
+    slice = Array.prototype.slice,
     undef_str = typeof undef,
     _callback_list = {};
 
@@ -44,13 +47,13 @@ namespace('xiphe.wait.until', (function() {
    */
   _waitFor = function(module, interval, patience, continueOnError) {
     var endOfPartience = new Date().getTime(),
-      moduleKey = Array.prototype.slice.call(arguments).join('.'),
+      moduleKey = slice.call(arguments).join('.'),
       error = false,
       _loader;
 
     /* Set defaults for patience and continueOnError if not defined. */
-    endOfPartience += patience =+ (typeof patience === undef_str ? xiphe.wait.patience : patience);
-    continueOnError = (typeof continueOnError === undef_str ? true : continueOnError);
+    endOfPartience += patience =+ (typeof patience === undef_str ? wait.patience : patience);
+    continueOnError = (typeof continueOnError === undef_str ? wait.continueOnError : continueOnError);
 
     _loader = self.setInterval(function() {
       /* If module became available or patience is over. */
@@ -64,7 +67,7 @@ namespace('xiphe.wait.until', (function() {
 
         /* Notify the console if the timer stopped because patience was over. */
         if (error && self.console) {
-          self.console.error('Module "'+module+'" not found after '+(patience/1000)+' seconds - aborting!');
+          self.console.error('Module "'+module+'" not found in '+(patience/1000)+' seconds - aborting!');
         }
 
         /* Fire callbacks if no error occurred or callbacks should be fired anyways. */
@@ -93,7 +96,7 @@ namespace('xiphe.wait.until', (function() {
    * @return {Undefined}
    */
   return function(module, callback, interval) {
-    var moduleKey, _arguments = Array.prototype.slice.call(arguments);
+    var moduleKey, _arguments = slice.call(arguments);
 
     /* Set the default on the interval if undefined. */
     _arguments[2] = intervall =+ (typeof intervall === undef_str ? 10 : interval);
