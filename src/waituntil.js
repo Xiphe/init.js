@@ -1,6 +1,28 @@
 /*global namespace, xiphe */
+
+/*
+ * Global setting for the time when a xiphe.wait.until call stops
+ * searching for the given module.
+ */
 namespace('xiphe.wait.patience', 3000);
+/*
+ * Global setting for if xiphe.wait.until callbacks should be
+ * called even if the module could not be found.
+ */
 namespace('xiphe.wait.continueOnError', true);
+
+/**
+ * Initiate a new loop that searches for the passed module and
+ * calls passed callbacks when the module stops being undefined.
+ *
+ * @param  {String}   module          The module name.
+ * @param  {Function} callback        The callback function.
+ * @param  {Integer}  interval        The pause between checks.
+ * @param  {Integer}  patience        The time until abort.
+ * @param  {Boolean}  continueOnError Whether or not the callbacks should be fired if loop was aborted.
+ *
+ * @return {Undefined}
+ */
 namespace('xiphe.wait.until', (function() {
   var undef,
     _available,
@@ -39,7 +61,7 @@ namespace('xiphe.wait.until', (function() {
    * Initiate a new loop that waits for a module to become available.
    *
    * @param  {String}  module          The module name.
-   * @param  {Integer} interval       The pause between checks.
+   * @param  {Integer} interval        The pause between checks.
    * @param  {Integer} patience        The time until abort.
    * @param  {Boolean} continueOnError Whether or not the callbacks should be fired if loop was aborted.
    *
@@ -99,7 +121,7 @@ namespace('xiphe.wait.until', (function() {
     var moduleKey, _arguments = slice.call(arguments);
 
     /* Set the default on the interval if undefined. */
-    _arguments[2] = intervall =+ (typeof intervall === undef_str ? 10 : interval);
+    _arguments[2] = interval =+ (typeof interval === undef_str ? 10 : interval);
 
     /* If the module is unavailable... */
     if (!_available(module)) {
