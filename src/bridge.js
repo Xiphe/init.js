@@ -39,7 +39,7 @@ namespace('xiphe.jquery.bridge', function(name, callback) {
 
         /* Loop through all current elements. */
         this.each(function() {
-          var return_var, instance = $.data(this, 'plugin_' + name);
+          var return_var, error = 0, instance = $.data(this, 'plugin_' + name);
 
           /* Plugin has not been initialized yet. */
           if (!instance) {
@@ -50,28 +50,43 @@ namespace('xiphe.jquery.bridge', function(name, callback) {
             return;
           }
 
-          /* Method does not exist or is protected. */
-          if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
-            var method = options.substring(0, 3),
-                variable = options.substring(3),
-                f = options.charAt(0).toLowerCase(),
-                exists;
-            variable = f + variable.substr(1);
-            exists = typeof instance[variable] !== undef_str;
+          /* Method is protected. */
+          if (options.charAt(0) === "_") {
+            error = 1;
+          /* Method does not exist. */
+          } else if (!$.isFunction(instance[options])) {
+            /* Apply magic getters / setters if the variable is not protected. */
+            if (instance._magicGetSet === true && options.charAt(3) !== "_") {
+              var method = options.substring(0, 3),
+                  variable = options.charAt(3).toLowerCase() + options.substring(4),
+                  exists = typeof instance[variable] !== undef_str;
 
-            if (exists && method === 'get') {
-              return_var = instance[variable];
-            } else if (exists && method === 'set' && typeof args[0] !== undef_str) {
-              instance[variable] = args[0];
-            } else {
-              if (self.console) {
-                self.console.error("No such method '" + options + "' for " + name + " instance.");
+              if (exists && method === 'get') {
+                return_var = instance[variable];
+              } else if (exists && method === 'set') {
+                if (typeof args[0] !== undef_str) {
+                  instance[variable] = args[0];
+                } else {
+                  error = 3;
+                }
+              } else {
+                error = 2;
               }
-              return;
+            } else {
+              error = 2;
             }
           } else {
             /* Apply the method. */
             return_var = instance[options].apply(instance, args);
+          }
+
+          /* An error occurred - method or variable is not available / existent. */
+          if (error > 0) {
+            if (window.console) {
+              var message = error === 1 ? 'Unable to access protected method' : error === 2 ? 'No such method' : 'Missing second parameter when called';
+              window.console.error(message + " '" + options + "' for " + name + " instance.");
+            }
+            return;
           }
 
           /* Check if the method result should be returned by the bridge. */
