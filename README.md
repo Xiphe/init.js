@@ -129,6 +129,12 @@ xiphe.wait.until(
 );
 ```
 
+Changelog
+---------
+### 0.1.2
+* Magic getters and setters for the bridge
+* Add no-jQuery builds.
+
 
 Todo
 ----
